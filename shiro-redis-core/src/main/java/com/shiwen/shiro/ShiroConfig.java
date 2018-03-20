@@ -1,5 +1,6 @@
 package com.shiwen.shiro;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.crazycake.shiro.RedisManager;
 import org.crazycake.shiro.RedisSessionDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -31,6 +33,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
+import com.shiwen.shiro.properties.Realms;
+import com.shiwen.shiro.properties.RedisFiltersConfig;
 import com.shiwen.shiro.properties.ShiroCookieConfig;
 import com.shiwen.shiro.properties.ShiroFilterChainMap;
 import com.shiwen.shiro.properties.ShiroRedisConfig;
@@ -44,7 +48,8 @@ import com.shiwen.shiro.properties.ShiroRedisConfig;
  * 
  */
 @Configuration
-@EnableConfigurationProperties({ ShiroFilterChainMap.class, ShiroRedisConfig.class, ShiroCookieConfig.class })
+@EnableConfigurationProperties({ ShiroFilterChainMap.class, ShiroRedisConfig.class, ShiroCookieConfig.class,
+		Realms.class, RedisFiltersConfig.class })
 @Import(ShiroAnnotationsSupportConfig.class)
 public class ShiroConfig {
 
@@ -56,13 +61,17 @@ public class ShiroConfig {
 
 	private Realms realms;
 
+	@Autowired(required = false)
+	private RedisFiltersConfig filters;
+
 	/**
 	 * Constrcator
 	 * 
 	 * @param shiroFilterChainMap
 	 * @param realms
 	 */
-	public ShiroConfig(ShiroFilterChainMap shiroFilterChainMap, Realms realms, ShiroRedisConfig shiroRedisConfig, ShiroCookieConfig shiroCookieConfig) {
+	public ShiroConfig(ShiroFilterChainMap shiroFilterChainMap, Realms realms, ShiroRedisConfig shiroRedisConfig,
+			ShiroCookieConfig shiroCookieConfig) {
 		this.realms = realms;
 		this.shiroFilterChainMap = shiroFilterChainMap;
 		this.shiroRedisConfig = shiroRedisConfig;
@@ -154,10 +163,19 @@ public class ShiroConfig {
 	/**
 	 * 
 	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws ClassNotFoundException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public DefaultWebSecurityManager securityManager() {
+	public DefaultWebSecurityManager securityManager()
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		if (realms != null && CollectionUtils.isNotEmpty(realms.get()))
 			securityManager.setRealms(realms.get());
@@ -170,13 +188,24 @@ public class ShiroConfig {
 	/**
 	 * 
 	 * @return
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws ClassNotFoundException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
 	 */
 	@Bean(name = ConfigConstants.SHIRO_FILTER_NAME)
 	@ConditionalOnMissingBean
-	public ShiroFilterFactoryBean shiroFilterFactoryBean() {
+	public ShiroFilterFactoryBean shiroFilterFactoryBean()
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 		SecurityManager securityManager = securityManager();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);
+		if (filters != null && filters.size() > 0)
+			shiroFilterFactoryBean.setFilters(filters.get());
 		Map<String, String> filterChainDefinitionMap = this.shiroFilterChainMap.getMap();
 		shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 		return shiroFilterFactoryBean;
