@@ -1,15 +1,18 @@
 package com.shiwen.shiro.properties;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.Filter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 
-import com.shiwen.shiro.exception.NotFilterException;
+import com.shiwen.shiro.exception.NoFilterInSpringBeanFactoryException;
 
 /**
  * 
@@ -21,34 +24,34 @@ public class RedisFiltersConfig {
 
 	public static final String prefix = "shiro.filters";
 
-	private Map<String, String> filterClassNames = new LinkedHashMap<>();
+	private List<String> filterSpringBeanNames = new ArrayList<>();
 
-	public Map<String, String> getFilterClassNames() {
-		return filterClassNames;
+	public List<String> getFilterSpringBeanNames() {
+		return filterSpringBeanNames;
 	}
 
-	public void setFilterClassNames(Map<String, String> filterClassNames) {
-		this.filterClassNames = filterClassNames;
+	public void setFilterSpringBeanNames(List<String> filterSpringBeanNames) {
+		this.filterSpringBeanNames = filterSpringBeanNames;
 	}
 
 	public int size() {
-		return this.filterClassNames.size();
+		return filterSpringBeanNames.size();
 	}
 
-	public String put(String key, String filterClassName) {
-		return this.filterClassNames.put(key, filterClassName);
+	public boolean add(String key) {
+		return filterSpringBeanNames.add(key);
 	}
 
-	public void putAdd(Map<String, String> map) {
-		this.filterClassNames.putAll(map);
+	public void AddAll(Collection<String> names) {
+		filterSpringBeanNames.addAll(names);
 	}
 
-	public String remove(String key) {
-		return this.filterClassNames.remove(key);
+	public boolean remove(String key) {
+		return filterSpringBeanNames.remove(key);
 	}
 
 	public void clear() {
-		this.filterClassNames.clear();
+		filterSpringBeanNames.clear();
 	}
 
 	/**
@@ -62,20 +65,16 @@ public class RedisFiltersConfig {
 	 * @throws InvocationTargetException
 	 * @throws IllegalArgumentException
 	 */
-	public Map<String, Filter> get() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-			NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
+	public Map<String, Filter> get(ApplicationContext context) throws ClassNotFoundException, InstantiationException,
+			IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
 		Map<String, Filter> filters = new LinkedHashMap<>();
-		for (Map.Entry<String, String> entry : filterClassNames.entrySet()) {
-			String key = entry.getKey();
-			String value = entry.getValue();
-			Class<?> clazz = Class.forName(value);
-			Object instance = clazz.newInstance();
-			if (instance instanceof Filter) {
-				Method method = Map.class.getMethod("put", Object.class, Object.class);
-				method.invoke(filters, key, instance);
-			} else {
-				throw new NotFilterException(value + " is not a Filter instance");
-			}
+		for (String filterSpringBeanName : filterSpringBeanNames) {
+			Filter instance = context.getBean(filterSpringBeanName, Filter.class);
+			if (instance != null)
+				filters.put(filterSpringBeanName, instance);
+			else
+				throw new NoFilterInSpringBeanFactoryException(
+						"It has no a Filter instance in spring bean factory named " + filterSpringBeanName);
 		}
 		return filters;
 	}

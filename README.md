@@ -8,16 +8,15 @@
 </dependency>
 ```
 
-前缀：shiro.filter.chain 过滤器链：例如 
+前缀：shiro.filter.chain 过滤器链：例如, key为过滤器名称， value为URL匹配，因为url中有yml会解析错误的字符
 
 ```
 shiro:
   filter:
     chain:
       map:
-        /dll/login: anon
-        /dll/an: anon
-        /dll/ac: authc
+        anon: /dll/an
+        authc: /dll/ac
 			
 redis pool 配置：shiro.redis.config 例如
 shiro:
@@ -46,11 +45,29 @@ shiro.cookie.
 	private String rememberMeCookieName;
 
 
-配置Realms在spring的容器中
+配置示例
 
 ```
-public class Realms {
-	private List<Realm> realms = new ArrayList<>();
-}
+shiro:
+  filter:
+    chain:
+      map:
+        anon: /login
+  cookie:
+    path: /
+    session-id-cookie-name: shiro-auth
+  redis:
+    database: 1
+    host: 192.168.10.168
+    port: 6379
+  filters:
+    filter-spring-bean-names:
+    - restAuthc
+  realms:
+    realm-spring-bean-names:
+    - userRealm
+    - emailRealm
+
 ```
+
 # spring-boot-starter-shiro-redis

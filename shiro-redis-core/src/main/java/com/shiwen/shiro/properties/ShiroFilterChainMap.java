@@ -1,7 +1,5 @@
 package com.shiwen.shiro.properties;
 
-import java.util.LinkedHashMap;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -16,13 +14,13 @@ public class ShiroFilterChainMap {
 
 	public static final String PREFIX = "shiro.filter.chain";
 
-	public LinkedHashMap<String, String> map = new LinkedHashMap<>();
+	private String map;
 
-	public LinkedHashMap<String, String> getMap() {
+	public String getMap() {
 		return map;
 	}
 
-	public void setMap(LinkedHashMap<String, String> map) {
+	public void setMap(String map) {
 		this.map = map;
 	}
 

@@ -11,8 +11,8 @@
 	<description>shiro-redis-parent</description>
 
 	<modules>
-		<module>../spring-boot-shiro-redis-starter</module>
 		<module>../shiro-redis-core</module>
+		<module>../spring-boot-shiro-redis-starter</module>
 	</modules>
 
 	<properties>
