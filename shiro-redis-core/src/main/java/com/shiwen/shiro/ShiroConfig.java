@@ -82,7 +82,6 @@ public class ShiroConfig {
 		this.shiroRedisConfig = shiroRedisConfig;
 		this.shiroCookieConfig = shiroCookieConfig;
 		if (logger.isInfoEnabled()) {
-			logger.info("shiro filter chain map type == {}", this.shiroFilterChainMap.getMap().getClass().getName());
 			logger.info("shiro filter chain map == {}", this.shiroFilterChainMap.getMap());
 		}
 	}
