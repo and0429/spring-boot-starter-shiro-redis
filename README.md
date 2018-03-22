@@ -1,4 +1,4 @@
-增加依赖:
+## 增加依赖:
 
 ```
 <dependency>
@@ -8,7 +8,7 @@
 </dependency>
 ```
 
-前缀：shiro.filter.chain 过滤器链：例如, key为过滤器名称， value为URL匹配，因为url中有yml会解析错误的字符
+## 前缀：shiro.filter.chain 过滤器链：例如, key为过滤器名称， value为URL匹配，因为url中有yml会解析错误的字符
 
 ```
 shiro:
@@ -25,7 +25,7 @@ shiro:
 ```
 
 
-可配置属性包括以下内容：   
+## 可配置属性包括以下内容：   
    
 	String host = "127.0.0.1"
 	int port = 6379;         
@@ -35,8 +35,7 @@ shiro:
 	int database = 0; 
 
 
-设置cookie相关 
-shiro.cookie.
+## 设置cookie相关 shiro.cookie.
 包括如下内容：
 
 	private String domain;
@@ -45,7 +44,7 @@ shiro.cookie.
 	private String rememberMeCookieName;
 
 
-配置示例
+## 配置示例
 
 ```
 shiro:
