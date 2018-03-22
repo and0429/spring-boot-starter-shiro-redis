@@ -8,16 +8,17 @@
 </dependency>
 ```
 
-## 前缀：shiro.filter.chain 过滤器链：例如, key为过滤器名称， value为URL匹配，因为url中有yml会解析错误的字符
+## 前缀：shiro.filter.chain 过滤器链：注意map后面的 | 
 
 ```
 shiro:
   filter:
     chain:
-      map:
-        anon: /dll/an
-        authc: /dll/ac
-			
+      map: |
+		/login=anon
+        /logout=restLogout
+        /**=restAuthc
+       	
 redis pool 配置：shiro.redis.config 例如
 shiro:
   redis:
