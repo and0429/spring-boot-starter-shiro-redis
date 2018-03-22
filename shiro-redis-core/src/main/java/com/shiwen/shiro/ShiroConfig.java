@@ -14,6 +14,7 @@ import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
@@ -144,7 +145,20 @@ public class ShiroConfig {
 	public SessionDAO redisSessionDAO() {
 		RedisSessionDAO sessionDao = new RedisSessionDAO();
 		sessionDao.setRedisManager(redisManager());
+		SessionIdGenerator sessionIdGenerator = sessionIdGenerator();
+		if (sessionIdGenerator != null)
+			sessionDao.setSessionIdGenerator(sessionIdGenerator);
 		return sessionDao;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	public SessionIdGenerator sessionIdGenerator() {
+		return null;
 	}
 
 	/**
@@ -169,13 +183,6 @@ public class ShiroConfig {
 	/**
 	 * 
 	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws ClassNotFoundException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
 	 */
 	@Bean
 	@ConditionalOnMissingBean
@@ -196,7 +203,7 @@ public class ShiroConfig {
 	 * @return
 	 */
 	@Bean
-	@ConditionalOnMissingBean
+	@ConditionalOnMissingBean(type = "org.apache.shiro.authc.pam.AbstractAuthenticationStrategy")
 	public AbstractAuthenticationStrategy authenticationStrategy() {
 		return null;
 	}
@@ -228,8 +235,7 @@ public class ShiroConfig {
 	 */
 	@Bean(name = ConfigConstants.SHIRO_FILTER_NAME)
 	@ConditionalOnMissingBean
-	public ShiroFilterFactoryBean shiroFilterFactoryBean() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public ShiroFilterFactoryBean shiroFilterFactoryBean() {
 		ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 		SecurityManager securityManager = securityManager();
 		shiroFilterFactoryBean.setSecurityManager(securityManager);

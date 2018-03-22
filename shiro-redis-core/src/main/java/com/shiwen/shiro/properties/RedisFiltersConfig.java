@@ -1,6 +1,5 @@
 package com.shiwen.shiro.properties;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -9,10 +8,11 @@ import java.util.Map;
 
 import javax.servlet.Filter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-
-import com.shiwen.shiro.exception.NoFilterInSpringBeanFactoryException;
 
 /**
  * 
@@ -21,6 +21,8 @@ import com.shiwen.shiro.exception.NoFilterInSpringBeanFactoryException;
  */
 @ConfigurationProperties(prefix = RedisFiltersConfig.prefix)
 public class RedisFiltersConfig {
+
+	public static final Logger logger = LoggerFactory.getLogger(RedisFiltersConfig.class);
 
 	public static final String prefix = "shiro.filters";
 
@@ -57,24 +59,16 @@ public class RedisFiltersConfig {
 	/**
 	 * 
 	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 * @throws SecurityException
-	 * @throws NoSuchMethodException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
 	 */
-	public Map<String, Filter> get(ApplicationContext context) throws ClassNotFoundException, InstantiationException,
-			IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException, InvocationTargetException {
+	public Map<String, Filter> get(ApplicationContext context) {
 		Map<String, Filter> filters = new LinkedHashMap<>();
 		for (String filterSpringBeanName : filterSpringBeanNames) {
-			Filter instance = context.getBean(filterSpringBeanName, Filter.class);
-			if (instance != null)
+			try {
+				Filter instance = context.getBean(filterSpringBeanName, Filter.class);
 				filters.put(filterSpringBeanName, instance);
-			else
-				throw new NoFilterInSpringBeanFactoryException(
-						"It has no a Filter instance in spring bean factory named " + filterSpringBeanName);
+			} catch (BeansException e) {
+				logger.warn("It has no a Filter instance in spring bean factory named " + filterSpringBeanName, e);
+			}
 		}
 		return filters;
 	}

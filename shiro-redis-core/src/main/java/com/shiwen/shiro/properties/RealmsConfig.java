@@ -1,14 +1,14 @@
 package com.shiwen.shiro.properties;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.shiro.realm.Realm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-
-import com.shiwen.shiro.exception.NoRealmInSpringBeanFactoryException;
 
 /**
  * 
@@ -17,6 +17,8 @@ import com.shiwen.shiro.exception.NoRealmInSpringBeanFactoryException;
  */
 @ConfigurationProperties(prefix = RealmsConfig.PREFIX)
 public class RealmsConfig {
+
+	public static final Logger logger = LoggerFactory.getLogger(RealmsConfig.class);
 
 	public static final String PREFIX = "shiro.realms";
 
@@ -52,22 +54,16 @@ public class RealmsConfig {
 	/**
 	 * 
 	 * @return
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 * @throws InvocationTargetException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws ClassNotFoundException
-	 * @throws InstantiationException
 	 */
 	public List<Realm> get(ApplicationContext context) {
 		List<Realm> realmsObj = new ArrayList<>();
 		for (String realmSpringBeanName : realmSpringBeanNames) {
-			Realm realm = context.getBean(realmSpringBeanName, Realm.class);
-			if (realm != null)
+			try {
+				Realm realm = context.getBean(realmSpringBeanName, Realm.class);
 				realmsObj.add(realm);
-			else
-				throw new NoRealmInSpringBeanFactoryException("It has no Bean named " + realmSpringBeanName + " in spring bean factory!");
+			} catch (BeansException e) {
+				logger.warn("It has no Bean named " + realmSpringBeanName + " in spring bean factory!", e);
+			}
 		}
 		return realmsObj;
 	}
