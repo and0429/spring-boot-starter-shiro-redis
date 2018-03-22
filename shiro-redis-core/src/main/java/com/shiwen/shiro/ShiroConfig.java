@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.shiro.authc.pam.AbstractAuthenticationStrategy;
+import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.RememberMeManager;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.session.mgt.SessionManager;
@@ -177,15 +179,40 @@ public class ShiroConfig {
 	 */
 	@Bean
 	@ConditionalOnMissingBean
-	public DefaultWebSecurityManager securityManager() throws ClassNotFoundException, InstantiationException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public DefaultWebSecurityManager securityManager() {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 		if (realms != null && CollectionUtils.isNotEmpty(realms.get(context)))
 			securityManager.setRealms(realms.get(context));
 		securityManager.setSessionManager(sessionManager());
 		securityManager.setRememberMeManager(rememberMeManager());
 		securityManager.setCacheManager(cacheManager());
+		securityManager.setAuthenticator(authenticator());
 		return securityManager;
+	}
+
+	/**
+	 * 使用方在容器中没有定义realms策略， 就使用默认的策略
+	 * 
+	 * @return
+	 */
+	@Bean
+	@ConditionalOnMissingBean
+	public AbstractAuthenticationStrategy authenticationStrategy() {
+		return null;
+	}
+
+	/*
+	 * 
+	 */
+	@Bean
+	public ModularRealmAuthenticator authenticator() {
+		ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
+		if (realms != null && CollectionUtils.isNotEmpty(realms.get(context)))
+			authenticator.setRealms(realms.get(context));
+		AbstractAuthenticationStrategy authenticationStrategy = authenticationStrategy();
+		if (authenticationStrategy != null) // default if no bean in spring application.
+			authenticator.setAuthenticationStrategy(authenticationStrategy);
+		return authenticator;
 	}
 
 	/**

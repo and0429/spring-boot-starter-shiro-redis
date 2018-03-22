@@ -60,8 +60,7 @@ public class RealmsConfig {
 	 * @throws ClassNotFoundException
 	 * @throws InstantiationException
 	 */
-	public List<Realm> get(ApplicationContext context)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException, InstantiationException {
+	public List<Realm> get(ApplicationContext context) {
 		List<Realm> realmsObj = new ArrayList<>();
 		for (String realmSpringBeanName : realmSpringBeanNames) {
 			Realm realm = context.getBean(realmSpringBeanName, Realm.class);
