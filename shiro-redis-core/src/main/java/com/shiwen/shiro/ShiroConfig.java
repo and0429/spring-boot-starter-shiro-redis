@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.shiro.authc.pam.AbstractAuthenticationStrategy;
 import org.apache.shiro.authc.pam.ModularRealmAuthenticator;
 import org.apache.shiro.mgt.RememberMeManager;
@@ -16,6 +15,7 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.session.mgt.eis.SessionIdGenerator;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.Cookie;
@@ -84,9 +84,8 @@ public class ShiroConfig {
 		this.shiroFilterChainMap = shiroFilterChainMap;
 		this.shiroRedisConfig = shiroRedisConfig;
 		this.shiroCookieConfig = shiroCookieConfig;
-		if (logger.isInfoEnabled()) {
-			logger.info("shiro filter chain map == {}", this.shiroFilterChainMap.getMap());
-		}
+		if (logger.isInfoEnabled())
+			logger.info("shiro filter chain map <==== \n{} ", this.shiroFilterChainMap.getMap());
 	}
 
 	/**
@@ -188,7 +187,7 @@ public class ShiroConfig {
 	@ConditionalOnMissingBean
 	public DefaultWebSecurityManager securityManager() {
 		DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-		if (realms != null && CollectionUtils.isNotEmpty(realms.get(context)))
+		if (realms != null && !CollectionUtils.isEmpty(realms.get(context)))
 			securityManager.setRealms(realms.get(context));
 		securityManager.setSessionManager(sessionManager());
 		securityManager.setRememberMeManager(rememberMeManager());
@@ -214,7 +213,7 @@ public class ShiroConfig {
 	@Bean
 	public ModularRealmAuthenticator authenticator() {
 		ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
-		if (realms != null && CollectionUtils.isNotEmpty(realms.get(context)))
+		if (realms != null && !CollectionUtils.isEmpty(realms.get(context)))
 			authenticator.setRealms(realms.get(context));
 		AbstractAuthenticationStrategy authenticationStrategy = authenticationStrategy();
 		if (authenticationStrategy != null) // default if no bean in spring application.
