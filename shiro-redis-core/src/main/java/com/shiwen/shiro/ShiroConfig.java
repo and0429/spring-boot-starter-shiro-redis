@@ -213,15 +213,12 @@ public class ShiroConfig {
 	@Bean
 	public ModularRealmAuthenticator authenticator() {
 		ModularRealmAuthenticator authenticator = new ModularRealmAuthenticator();
-<<<<<<< HEAD
 		if (realms != null && !CollectionUtils.isEmpty(realms.get(context)))
 			authenticator.setRealms(realms.get(context));
-=======
->>>>>>> 8d89b40c73dbbb2fcc5423f56e2eb67adbaa7cae
 		AbstractAuthenticationStrategy authenticationStrategy = authenticationStrategy();
 		if (authenticationStrategy != null) // default if no bean in spring application.
 			authenticator.setAuthenticationStrategy(authenticationStrategy);
-		if (realms != null && CollectionUtils.isNotEmpty(realms.get(context)))
+		if (realms != null && !CollectionUtils.isEmpty(realms.get(context)))
 			authenticator.setRealms(realms.get(context));
 		return authenticator;
 	}
