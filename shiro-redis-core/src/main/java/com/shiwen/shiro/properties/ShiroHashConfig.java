@@ -1,6 +1,7 @@
 package com.shiwen.shiro.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 /**
  * 
@@ -11,6 +12,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author zhangkai
  *
  */
+@Component
 @ConfigurationProperties(prefix = ShiroHashConfig.PREFIX)
 public class ShiroHashConfig {
 
