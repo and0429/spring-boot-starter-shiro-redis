@@ -28,7 +28,7 @@ shiro:
 
 ## 可配置属性包括以下内容：   
    
-	String host = "127.0.0.1"
+	host = "127.0.0.1"
 	int port = 6379;         
 	long expire = 1800L;     
 	long timeout;            
