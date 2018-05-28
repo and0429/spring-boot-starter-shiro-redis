@@ -15,7 +15,7 @@ shiro:
   filter:
     chain:
       map: |
-		/login=anon
+	/login=anon
         /logout=restLogout
         /**=restAuthc
        	
