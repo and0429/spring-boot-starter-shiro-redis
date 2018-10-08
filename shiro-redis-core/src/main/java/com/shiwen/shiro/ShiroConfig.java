@@ -18,7 +18,6 @@ import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.util.CollectionUtils;
 import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
-import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.ShiroHttpSession;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
@@ -109,7 +108,7 @@ public class ShiroConfig {
 	public SessionManager sessionManager() {
 		DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
 		sessionManager.setSessionDAO(redisSessionDAO());
-		Cookie sessionIdCookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
+		SimpleCookie sessionIdCookie = new SimpleCookie(ShiroHttpSession.DEFAULT_SESSION_ID_NAME);
 		String sessionIdCookieName = shiroCookieConfig.getSessionIdCookieName();
 		if (sessionIdCookieName != null)
 			sessionIdCookie.setName(sessionIdCookieName);
@@ -126,7 +125,7 @@ public class ShiroConfig {
 	@ConditionalOnMissingBean
 	public RememberMeManager rememberMeManager() {
 		CookieRememberMeManager manager = new CookieRememberMeManager();
-		Cookie cookie = new SimpleCookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME);
+		SimpleCookie cookie = new SimpleCookie(CookieRememberMeManager.DEFAULT_REMEMBER_ME_COOKIE_NAME);
 		String rememberMeCookieName = shiroCookieConfig.getRememberMeCookieName();
 		if (rememberMeCookieName != null)
 			cookie.setName(rememberMeCookieName);
@@ -272,7 +271,8 @@ public class ShiroConfig {
 	 * 
 	 * @param cookie
 	 */
-	private void reSetCookie(Cookie cookie) {
+	private void reSetCookie(SimpleCookie cookie) {
+		cookie.setHttpOnly(false);
 		String dm = shiroCookieConfig.getDomain();
 		if (dm != null)
 			cookie.setDomain(dm);
