@@ -4,7 +4,7 @@
 
     <groupId>com.shiwen</groupId>
     <artifactId>shiro-redis-parent</artifactId>
-    <version>1.0.4.RELEASE</version>
+    <version>1.0.0.RELEASE</version>
     <packaging>pom</packaging>
 
     <name>shiro-redis-parent</name>
@@ -12,7 +12,7 @@
 
     <modules>
         <module>shiro-redis-core</module>
-        <module>shiro-redis-default</module>
+        <module>shiro-shiro-default</module>
         <module>spring-boot-shiro-redis-starter</module>
     </modules>
 

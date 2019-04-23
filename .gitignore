@@ -5,3 +5,4 @@ target/
 .project
 .apt_generated
 .factorypath
+.idea/
