@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.shiwen</groupId>
         <artifactId>shiro-redis-parent</artifactId>
-        <version>1.0.4.RELEASE</version>
+        <version>1.0.5.RELEASE</version>
     </parent>
 
     <artifactId>shiro-redis-default</artifactId>
