@@ -22,7 +22,7 @@
         <java.version>1.8</java.version>
         <spring-boot.version>2.0.1.RELEASE</spring-boot.version>
         <servlet.version>3.1.0</servlet.version>
-        <shiro.version>1.5.0</shiro.version>
+        <shiro.version>1.10.0</shiro.version>
         <shiro-redis.version>2.4.8</shiro-redis.version>
     </properties>
 
